@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -7,8 +7,8 @@ import { useCart } from '../contexts/CartContext';
 
 
 export default function Cart() {
-    const {state:cartData} = useCart()
-    
+    const { state: cartData } = useCart()
+
     const [plans, setPlans] = useState([])
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -31,17 +31,21 @@ export default function Cart() {
             editable: false,
         },
     ];
-
+    const transformedData = (data) => {
+        return cartData.map(data => data.content)
+    }
     useEffect(() => {
         const fetchData = async () => {
-            setPlans(cartData.map(data => data.content))
+            setPlans(transformedData(cartData))
             // setPlans(cartData);
         }
         fetchData();
     }, [])
 
-    const handleSelect = (selectionModel, detail) => {
-        console.log(selectionModel, detail)
+    const getCartTotal = () => {
+        const data = transformedData(cartData)
+        console.log(data.reduce((a, b) => +a + +b.price, 0))
+        return data.reduce((a, b) => +a + +b.price, 0);
     }
 
     return (
@@ -49,12 +53,17 @@ export default function Cart() {
             <DataGrid
                 rows={plans}
                 columns={columns}
-                onSelectionModelChange={handleSelect}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
-                checkboxSelection
                 disableSelectionOnClick
             />
+            {getCartTotal() === 0 ? <></> : <Button
+                variant='contained'
+                onClick={() => {alert(`Thanks for your payment`)}}
+            >
+                Pay {getCartTotal()}
+            </Button>}
+
         </Box>
     )
 }

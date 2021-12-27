@@ -10,22 +10,21 @@ import { Box } from '@mui/system';
 import { getPlans } from '../utils/api';
 import { useCart } from '../contexts/CartContext';
 
-function PlanCard({ id, name, description, price }) {
+function PlanCard({ id, name, description, price, img_url }) {
     const { state, addToCart } = useCart()
     const handleAddToCart = () => {
         addToCart(
             { id, name, description, price }
         )
-        console.log(state)
     }
 
     return (
-        <Card sx={{ maxWidth: 500 }}>
+        <Card sx={{ width: 500 }}>
             <CardMedia
                 component="img"
                 height="140"
-                image="/static/images/cards/contemplative-reptile.jpg"
-                alt="green iguana"
+                src={img_url}
+                alt={name}
             />
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
@@ -61,6 +60,7 @@ export default function Plans() {
                     name={plan.name}
                     description={plan.description}
                     price={plan.price}
+                    img_url={plan.img_url}
                 ></PlanCard>
             })}
         </Box>
